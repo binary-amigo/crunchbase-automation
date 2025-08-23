@@ -18,27 +18,37 @@ class MasterSheetService:
     def _authenticate(self):
         """Authenticate with Google Sheets API"""
         try:
-            # Load existing token
-            if os.path.exists(self.config.GOOGLE_SHEETS_TOKEN_FILE):
-                self.creds = Credentials.from_authorized_user_file(
-                    self.config.GOOGLE_SHEETS_TOKEN_FILE, 
+            # First try to use credentials from environment variables
+            if self.config.GOOGLE_SHEETS_CREDENTIALS:
+                print("Using credentials from environment variables")
+                self.creds = Credentials.from_service_account_info(
+                    self.config.GOOGLE_SHEETS_CREDENTIALS,
                     ['https://www.googleapis.com/auth/spreadsheets']
                 )
+            else:
+                # Fall back to credential files
+                if os.path.exists(self.config.GOOGLE_SHEETS_CREDENTIALS_FILE):
+                    print("Using credentials from file")
+                    self.creds = Credentials.from_service_account_file(
+                        self.config.GOOGLE_SHEETS_CREDENTIALS_FILE,
+                        ['https://www.googleapis.com/auth/spreadsheets']
+                    )
+                else:
+                    raise FileNotFoundError(f"Credentials file not found: {self.config.GOOGLE_SHEETS_CREDENTIALS_FILE}")
             
             # If no valid credentials, get new ones
             if not self.creds or not self.creds.valid:
                 if self.creds and self.creds.expired and self.creds.refresh_token:
                     self.creds.refresh(Request())
                 else:
-                    flow = InstalledAppFlow.from_client_secrets_file(
-                        self.config.GOOGLE_SHEETS_CREDENTIALS_FILE,
-                        ['https://www.googleapis.com/auth/spreadsheets']
-                    )
-                    self.creds = flow.run_local_server(port=0)
-                
-                # Save credentials for next run
-                with open(self.config.GOOGLE_SHEETS_TOKEN_FILE, 'w') as token:
-                    token.write(self.creds.to_json())
+                    # For OAuth flow (if using user credentials instead of service account)
+                    if os.path.exists(self.config.GOOGLE_SHEETS_TOKEN_FILE):
+                        self.creds = Credentials.from_authorized_user_file(
+                            self.config.GOOGLE_SHEETS_TOKEN_FILE,
+                            ['https://www.googleapis.com/auth/spreadsheets']
+                        )
+                    else:
+                        raise Exception("No valid credentials found")
             
             self.service = build('sheets', 'v4', credentials=self.creds)
             

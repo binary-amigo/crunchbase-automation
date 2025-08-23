@@ -84,6 +84,14 @@ cd frontend
 # Install dependencies
 npm install
 
+# Setup environment variables
+cp .env.example .env.development  # For local development
+cp .env.example .env.production   # For production deployment
+
+# Edit environment files with your configuration
+# .env.development - Use for local development
+# .env.production - Use for production deployment
+
 # Run development server
 npm run dev
 ```
@@ -118,6 +126,21 @@ GOOGLE_SHEETS_TOKEN_FILE=token.json
 UPLOAD_FOLDER=uploads
 MAX_CONTENT_LENGTH=16777216
 ```
+
+### Frontend Configuration
+The frontend uses environment variables for configuration:
+
+```bash
+# .env.development (Local Development)
+VITE_API_BASE_URL=http://localhost:5000
+VITE_APP_NAME=Crunchbase Automation (Dev)
+
+# .env.production (Production)
+VITE_API_BASE_URL=https://your-domain.com
+VITE_APP_NAME=Crunchbase Automation
+```
+
+**Important**: Update `VITE_API_BASE_URL` in `.env.production` to match your deployed backend URL.
 
 ### Column Mapping
 The system automatically maps CSV columns to Google Sheets headers:

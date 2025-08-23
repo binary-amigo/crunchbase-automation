@@ -36,6 +36,7 @@ venv.bak/
 .env.test
 .env.production
 .env.*.local
+!.env.example
 
 # Google API Credentials (CRITICAL - Never commit these!)
 credentials.json

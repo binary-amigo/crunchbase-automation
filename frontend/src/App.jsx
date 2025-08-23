@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import './App.css'
+import config from './config'
 
 function App() {
   const [file, setFile] = useState(null)
@@ -20,7 +21,7 @@ function App() {
 
   const loadAvailableClients = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/clients')
+      const response = await fetch(config.getEndpoint('CLIENTS'))
       if (response.ok) {
         const result = await response.json()
         setClients(result.clients || [])
@@ -105,7 +106,7 @@ function App() {
       formData.append('client_id', selectedClient)
 
       // Send to Flask backend
-      const response = await fetch('http://localhost:5000/api/upload', {
+      const response = await fetch(config.getEndpoint('UPLOAD'), {
         method: 'POST',
         body: formData
       })
@@ -135,7 +136,7 @@ function App() {
   const pollProcessingStatus = async (filename) => {
     const pollInterval = setInterval(async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/status/${filename}`)
+        const response = await fetch(`${config.getEndpoint('STATUS')}/${filename}`)
         if (response.ok) {
           const statusData = await response.json()
           setProcessingStatus(statusData)
@@ -254,15 +255,13 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            CSV File Upload
-          </h1>
+        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{config.APP_NAME}</h1>
           <p className="text-gray-600">
-            Upload your CSV file and we'll process it for you
+            Upload CSV files and automatically process them to Google Sheets with intelligent duplicate prevention.
           </p>
         </div>
 

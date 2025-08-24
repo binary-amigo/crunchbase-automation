@@ -10,7 +10,7 @@ google-auth-httplib2==0.1.1
 google-api-python-client==2.108.0
 
 # Data processing dependencies
-pandas==2.2.0
+pandas==2.1.3
 python-dotenv==1.0.0
 
 # Additional dependencies for production

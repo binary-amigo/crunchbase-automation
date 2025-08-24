@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
-# Build script for Render deployment
+# exit on error
+set -o errexit
 
-echo "🚀 Starting build process..."
+# Install Python 3.11 explicitly
+echo "Installing Python 3.11..."
+pyenv install 3.11.9 -s
+pyenv global 3.11.9
+python --version
 
-# Upgrade pip and setuptools
-echo "📦 Upgrading build tools..."
-pip install --upgrade pip setuptools wheel
+# Create virtual environment with Python 3.11
+echo "Creating virtual environment..."
+python -m venv .venv
+source .venv/bin/activate
 
-# Install Python dependencies
-echo "📚 Installing Python dependencies..."
-pip install -r requirements.txt
+# Upgrade pip
+echo "Upgrading pip..."
+pip install --upgrade pip
 
-# Create necessary directories
-echo "📁 Creating necessary directories..."
-mkdir -p uploads
-mkdir -p logs
+# Install dependencies
+echo "Installing dependencies..."
+pip install -r requirements-render.txt
 
-# Set proper permissions
-echo "🔐 Setting permissions..."
-chmod 755 uploads
-chmod 755 logs
-
-echo "✅ Build completed successfully!" 
+# Clean up
+echo "Build completed successfully!" 

@@ -1,1 +1,1 @@
-web: cd backend && source .venv/bin/activate && python3 app.py
+web: cd backend && .venv/bin/python app.py
